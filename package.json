@@ -9,6 +9,7 @@
     "build": "tsc",
     "lint": "eslint src --ignore-path .eslintignore --ext .ts",
     "lint:fix": "npx eslint src --fix",
+    "format": "prettier . --write",
     "prettier": "prettier --ignore-path .gitignore --write \"./src/**/*.+(js|ts|json)\"",
     "prettier:fix": "npx prettier --write src",
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -21,7 +22,8 @@
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
     "lint-staged": "^15.1.0",
-    "mongoose": "^8.0.1"
+    "mongoose": "^8.8.2",
+    "zod": "^3.23.8"
   },
   "devDependencies": {
     "@types/cors": "^2.8.16",
