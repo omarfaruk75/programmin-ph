@@ -1,5 +1,4 @@
 export type TUser = {
-  _id: string;
   id: string;
   password: string;
   needPasswordChange: boolean;

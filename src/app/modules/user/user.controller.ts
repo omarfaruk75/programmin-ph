@@ -4,9 +4,12 @@ import { userService } from './user.service';
 
 const createStudent = async (req: Request, res: Response) => {
   try {
-    const { password, user: studentData } = req.body;
+
+    const { password, student: studentData } = req.body;
+    // console.log({password,studentData});
     // const zodParseData = studentValidationSchema.parse(userData)
     const result = await userService.createStudentIntoDB(password, studentData);
+    
 
     res.status(200).json({
       success: true,

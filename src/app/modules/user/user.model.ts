@@ -3,13 +3,9 @@ import { TUser } from './user.interface';
 
 const userSchema = new Schema<TUser>(
   {
-    _id: {
-      type: String,
-      required: true,
-    },
     id: {
       type: String,
-      required: true,
+      required:true
     },
     password: {
       type: String,

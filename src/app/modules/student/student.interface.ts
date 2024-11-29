@@ -1,8 +1,9 @@
 import { Types } from 'mongoose';
 
+
 export type TUserName = {
   firstName: string;
-  middleName: string;
+  middleName?: string;
   lastName: string;
 };
 
@@ -33,7 +34,7 @@ export type TStudent = {
   emergencyContactNo: string;
   bloogGroup?: 'A+' | 'A-' | 'B+' | 'B-' | 'AB+' | 'AB-' | 'O+' | 'O-';
   presentAddress: string;
-  permanentAddres: string;
+  permanentAddress: string;
   guardian: TGuardian;
   localGuardian: TLocalGuardian;
   profileImg?: string;

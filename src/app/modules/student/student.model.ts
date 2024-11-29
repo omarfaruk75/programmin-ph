@@ -1,11 +1,12 @@
-import { Schema, model } from 'mongoose';
+import { Schema,model } from 'mongoose';
 import {
   TGuardian,
   TLocalGuardian,
   TStudent,
   TUserName,
 } from './student.interface';
-import { User } from '../user/user.model';
+
+
 
 const userNameSchema = new Schema<TUserName>({
   firstName: {
@@ -70,25 +71,35 @@ const localGuradianSchema = new Schema<TLocalGuardian>({
 const studentSchema = new Schema<TStudent>({
   id: { type: String },
   user: {
-    type: Schema.Types.ObjectId,
-    required: [true, 'User Id is required'],
+    type:Schema.Types.ObjectId,
+    required: true,
     unique: true,
-    ref: User,
+    ref:' User',
   },
 
   name: userNameSchema,
-  gender: ['male', 'female'],
+  gender: {
+    type:String,
+    enum:['male', 'female'],
+    required:true
+  },
   dateOfBirth: { type: String },
   email: { type: String, required: true },
   contactNo: { type: String, required: true },
   emergencyContactNo: { type: String, required: true },
-  bloogGroup: ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'],
+  bloogGroup: {
+    type:String,
+    enum:['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-']
+  },
   presentAddress: { type: String, required: true },
-  permanentAddres: { type: String, required: true },
+  permanentAddress: { type: String, required: true },
   guardian: guardianSchema,
   localGuardian: localGuradianSchema,
   profileImg: { type: String },
-  isActive: ['active', 'blocked'],
+  isActive: {
+    type:String,
+    enum:['active', 'blocked']
+  }
 });
 
 export const Student = model<TStudent>('Student', studentSchema);
