@@ -1,37 +1,61 @@
-import { Request, Response } from 'express';
 import { StudentServices } from './student.service';
+import sendResponse from '../../utils/sendResponse';
+import httpStatus from "http-status";
+import catchAsync from '../../utils/catchAsync';
 
-const getAllStudents = async (req: Request, res: Response) => {
+
+const getAllStudents = catchAsync(async (req, res,next) => {
   try {
     const result = await StudentServices.getAllStudentsFromDB();
-
-    res.status(200).json({
-      success: true,
-      message: 'Students are retrieved succesfully',
-      data: result,
-    });
+   sendResponse(res,{
+    statusCode:httpStatus.OK,
+    success:true,
+    message:'Student Retrieved Successfully',
+    data:result
+   });
   } catch (err) {
-    console.log(err);
+    next(err);
   }
-};
+});
 
-const getSingleStudent = async (req: Request, res: Response) => {
-  try {
+const getSingleStudent = catchAsync(async (req, res) => {
+  
     const { studentId } = req.params;
-
     const result = await StudentServices.getSingleStudentFromDB(studentId);
+    sendResponse(res,{
+    statusCode:httpStatus.OK,
+    success:true,
+    message:'Student Retrieved Successfully',
+    data:result
+   })
+});
+const putSingleStudent = catchAsync(async (req, res) => {
+  
+    const { studentId } = req.params;
+    const result = await StudentServices.getSingleStudentFromDB(studentId);
+  sendResponse(res,{
+    statusCode:httpStatus.OK,
+    success:true,
+    message:'Student Updated Successfully',
+    data:result
+   })
+});
+const deleteSingleStudent =catchAsync( async (req, res) => {
 
-    res.status(200).json({
-      success: true,
-      message: 'Student is retrieved succesfully',
-      data: result,
-    });
-  } catch (err) {
-    console.log(err);
-  }
-};
+    const { studentId } = req.params;
+    const result = await StudentServices.getSingleStudentFromDB(studentId);
+  sendResponse(res,{
+    statusCode:httpStatus.OK,
+    success:true,
+    message:'Student Deleted Successfully',
+    data:result
+   })
+});
 
 export const StudentControllers = {
   getAllStudents,
   getSingleStudent,
+  putSingleStudent,
+  deleteSingleStudent,
+
 };

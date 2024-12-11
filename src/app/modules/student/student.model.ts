@@ -5,6 +5,7 @@ import {
   TStudent,
   TUserName,
 } from './student.interface';
+import { boolean } from 'zod';
 
 
 
@@ -80,14 +81,14 @@ const studentSchema = new Schema<TStudent>({
   name: userNameSchema,
   gender: {
     type:String,
-    enum:['male', 'female'],
+    enum:['male', 'female','other'],
     required:true
   },
   dateOfBirth: { type: String },
   email: { type: String, required: true },
   contactNo: { type: String, required: true },
   emergencyContactNo: { type: String, required: true },
-  bloogGroup: {
+  bloodGroup: {
     type:String,
     enum:['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-']
   },
@@ -96,10 +97,6 @@ const studentSchema = new Schema<TStudent>({
   guardian: guardianSchema,
   localGuardian: localGuradianSchema,
   profileImg: { type: String },
-  isActive: {
-    type:String,
-    enum:['active', 'blocked']
-  }
 });
 
 export const Student = model<TStudent>('Student', studentSchema);

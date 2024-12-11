@@ -9,8 +9,18 @@ const getSingleStudentFromDB = async (id: string) => {
   const result = await Student.findOne({ id });
   return result;
 };
+const putSingleStudentFromDB = async (id: string) => {
+  const result = await Student.updateOne({ id });
+  return result;
+};
+const deleteSingleStudentFromDB = async (id: string) => {
+  const result = await Student.deleteOne({ id });
+  return result;
+};
 
 export const StudentServices = {
   getAllStudentsFromDB,
   getSingleStudentFromDB,
+  putSingleStudentFromDB,
+  deleteSingleStudentFromDB
 };
