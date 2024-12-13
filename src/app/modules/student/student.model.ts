@@ -5,7 +5,8 @@ import {
   TStudent,
   TUserName,
 } from './student.interface';
-import { boolean } from 'zod';
+import { AcademicSemester } from '../academicSemester/academicSemester.model';
+import { string } from 'zod';
 
 
 
@@ -84,7 +85,7 @@ const studentSchema = new Schema<TStudent>({
     enum:['male', 'female','other'],
     required:true
   },
-  dateOfBirth: { type: String },
+  dateOfBirth: { type: String},
   email: { type: String, required: true },
   contactNo: { type: String, required: true },
   emergencyContactNo: { type: String, required: true },
@@ -97,6 +98,10 @@ const studentSchema = new Schema<TStudent>({
   guardian: guardianSchema,
   localGuardian: localGuradianSchema,
   profileImg: { type: String },
+  admissionSemester:{
+    type:Schema.Types.ObjectId,
+    ref:'AcademicSemester'
+  }
 });
 
 export const Student = model<TStudent>('Student', studentSchema);
