@@ -7,10 +7,8 @@ import { AcademicSemesterValidation } from './academicSemester.validation';
 const router = express.Router();
 router.post('/create-academic-semester',validateRequest(AcademicSemesterValidation.createAcademicSemesterValidationSchema),AcademicSemesterControllers.createAcademicSemester);
 router.get('/', AcademicSemesterControllers.getAcademicSemesters);
-
 router.get('/:semesterId', AcademicSemesterControllers.getSingleAcademicSemester);
 router.patch('/:semesterId',validateRequest(AcademicSemesterValidation.updateAcademicSemesterValidationSchema),
-AcademicSemesterControllers.patchAcadmicSemester);
-router.delete('/:semesterId', AcademicSemesterControllers.deleteAcademicSemester);
+AcademicSemesterControllers.updateAcadmicSemester);
 
 export const AcademicSemesterRoutes = router;

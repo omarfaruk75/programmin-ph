@@ -21,26 +21,21 @@ const getAcademicSemestersFromDB = async () => {
 };
 
 const getSingleAcademicSemesterFromDB = async (id: string) => {
-  const result = await AcademicSemester.findOne({ _id:id });
+  const result = await AcademicSemester.findById({ id });
   return result;
 };
-const patchAcademicSemesterFromDB = async (id: string,payload:Partial<TAcademicSemester>) => {
+const updateAcademicSemesterFromDB = async (id: string,payload:Partial<TAcademicSemester>) => {
   if(payload.name && payload.code && academicSemesterNameCodeMapper[payload.name]!== payload.code){
     throw new Error('Invalid Semeter Code')
   }
-  const result = await AcademicSemester.findOneAndUpdate({ _id:id },payload,{new:true});
+  const result = await AcademicSemester.findByIdAndUpdate({id },payload,{new:true});
   return result
-};
-const deleteAcademicSemestersFromDB = async (id: string) => {
-  const result = await AcademicSemester.deleteOne({ _id:id });
-  return result;
 };
 
 export const AcademicSemesterServices = {
     createAcademicSemesterIntoDB,
     getAcademicSemestersFromDB,
     getSingleAcademicSemesterFromDB,
-    patchAcademicSemesterFromDB,
-    deleteAcademicSemestersFromDB
+    updateAcademicSemesterFromDB
 
 }
