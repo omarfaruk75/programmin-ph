@@ -6,7 +6,9 @@ import { AcademicFacultyControllers } from './academicFaculty.controller';
 
 
 const router = express.Router();
-router.post('/create-academic-faculty',validateRequest(AcademicFacultyValidation.createAcademicFacultyValidationSchema),AcademicFacultyControllers.createAcademicFaculty);
+router.post('/create-academic-faculty',
+    validateRequest(AcademicFacultyValidation.createAcademicFacultyValidationSchema),
+    AcademicFacultyControllers.createAcademicFaculty);
 router.get('/', AcademicFacultyControllers.getAcademicFaculties);
 router.get('/:facultyId', AcademicFacultyControllers.getSingleAcademicFaculty);
 router.patch('/:facultyId',validateRequest(AcademicFacultyValidation.updateAcademicFacultyValidationSchema),

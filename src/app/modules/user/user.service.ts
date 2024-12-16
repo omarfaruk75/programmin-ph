@@ -1,4 +1,5 @@
-/* eslint-disable no-unused-expressions */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import mongoose from 'mongoose';
 import config from '../../config';
 import { AcademicSemester } from '../academicSemester/academicSemester.model';
@@ -7,87 +8,46 @@ import { Student } from '../student/student.model';
 import { TUser } from './user.interface';
 import { User } from './user.model';
 import generateStudentId from './user.utils';
-
-// const createStudentIntoDB = async (password: string, payload:TStudent) => {
-//   try {
-//     const userData: Partial<TUser>= {};
-// if (!payload.admissionSemester) {
-//       throw new Error('Admission semester is missing.');
-//     }
-
-//     // Find academic semester
-//     const admissionSemester = await AcademicSemester.findById(payload.admissionSemester);
-
-//     if (!admissionSemester) {
-//       throw new Error('Admission semester not found.');
-//     }
-
-//     const studentId = generateStudentId(admissionSemester);
-// if (!studentId) {
-//     throw new Error('Failed to generate student ID.');
-// }
-// userData.id = studentId;
-//   // userData.id = generateStudentId(admissionSemester);
-
-//   userData.password = password || (config.default_pass as string);
-
-//   userData.role = 'student'
-//   //set manually id
+import AppError from '../../errors/AppError';
+import {StatusCodes} from 'http-status-codes';
+import { TAcademicSemester } from '../academicSemester/academicSemester.interface';
 
 
-//   //create a user
+const createStudentIntoDB = async (password: string, payload:TStudent) => {
+    const userData: Partial<TUser>= {};
 
-//   const newUser = await User.create(userData);
-  
-
-//   if (Object.keys(newUser).length) {
-
-//     payload.user = newUser._id; //referrence id
-//     payload.id = newUser.id;
-
-//     //create new Student
-//    const newStudent = await Student.create(payload);
-
-//     return newStudent;
-//   }
-//   } catch (error) {
-//     console.log(error);
-//   }
-// };
-const createStudentIntoDB = async (password: string, payload: TStudent) => {
-    if (!payload.admissionSemester || !mongoose.Types.ObjectId.isValid(payload.admissionSemester)) {
-        throw new Error('Invalid or missing admission semester.');
-    }
-
+    userData.password = password || (config.default_pass as string);
+    userData.role = 'student'
+    // Find academic semester
+    
     const admissionSemester = await AcademicSemester.findById(payload.admissionSemester);
-    if (!admissionSemester) {
-        throw new Error('Admission semester not found.');
-    }
-
-    const studentId = await generateStudentId(admissionSemester); // Await the promise
-    if (!studentId) {
-        throw new Error('Failed to generate student ID.');
-    }
-
-    const userData: Partial<TUser> = {
-        id: studentId,
-        password: password || config.default_pass as string,
-        role: 'student',
-    };
-
+    const session = await mongoose.startSession(); 
     try {
-        const newUser = await User.create(userData);
-        payload.user = newUser._id;
-        payload.id = newUser.id;
-
-        const newStudent = await Student.create(payload);
+        //transaction-1
+        session.startTransaction();
+        userData.id = await generateStudentId(admissionSemester as TAcademicSemester);
+        const newUser = await User.create([userData],{session});
+        if (!newUser.length) {
+        throw new AppError(StatusCodes.BAD_REQUEST,'Failed to create new user')
+        }
+    payload.user = newUser[0]._id; //referrence id
+    payload.id = newUser[0].id;
+    //create new Student
+    //transaction-2
+   const newStudent = await Student.create([payload],{session});
+    if (!newStudent.length) {
+        throw new AppError(StatusCodes.BAD_REQUEST,'Failed to create new student')
+    } 
+        await session.commitTransaction();
+        await session.endSession();
         return newStudent;
-    } catch (error) {
-       console.log(error);
-    }
-};
 
+} catch (err:any) {
+    await session.abortTransaction();
+    await session.endSession();
+    throw new Error(err);
+}
+};
 export const userService = {
   createStudentIntoDB,
 };
-

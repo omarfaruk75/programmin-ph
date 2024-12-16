@@ -1,14 +1,15 @@
 import { StudentServices } from './student.service';
 import sendResponse from '../../utils/sendResponse';
-import httpStatus from "http-status";
 import catchAsync from '../../utils/catchAsync';
+import {StatusCodes} from 'http-status-codes';
 
 
 const getAllStudents = catchAsync(async (req, res,next) => {
   try {
-    const result = await StudentServices.getAllStudentsFromDB();
+    const queryField = req.query
+    const result = await StudentServices.getAllStudentsFromDB(queryField);
    sendResponse(res,{
-    statusCode:httpStatus.OK,
+    statusCode:StatusCodes.OK,
     success:true,
     message:'Student Retrieved Successfully',
     data:result
@@ -23,18 +24,18 @@ const getSingleStudent = catchAsync(async (req, res) => {
     const { studentId } = req.params;
     const result = await StudentServices.getSingleStudentFromDB(studentId);
     sendResponse(res,{
-    statusCode:httpStatus.OK,
+    statusCode:StatusCodes.OK,
     success:true,
     message:'Student Retrieved Successfully',
     data:result
    })
 });
-const putSingleStudent = catchAsync(async (req, res) => {
-  
+const updateSingleStudent = catchAsync(async (req, res) => {
     const { studentId } = req.params;
-    const result = await StudentServices.getSingleStudentFromDB(studentId);
+    const {student} =req.body
+    const result = await StudentServices.updateStudentIntoDB(studentId,student);
   sendResponse(res,{
-    statusCode:httpStatus.OK,
+    statusCode:StatusCodes.OK,
     success:true,
     message:'Student Updated Successfully',
     data:result
@@ -43,9 +44,9 @@ const putSingleStudent = catchAsync(async (req, res) => {
 const deleteSingleStudent =catchAsync( async (req, res) => {
 
     const { studentId } = req.params;
-    const result = await StudentServices.getSingleStudentFromDB(studentId);
+    const result = await StudentServices.deleteStudentFromDB(studentId);
   sendResponse(res,{
-    statusCode:httpStatus.OK,
+    statusCode:StatusCodes.OK,
     success:true,
     message:'Student Deleted Successfully',
     data:result
@@ -55,7 +56,7 @@ const deleteSingleStudent =catchAsync( async (req, res) => {
 export const StudentControllers = {
   getAllStudents,
   getSingleStudent,
-  putSingleStudent,
+  updateSingleStudent,
   deleteSingleStudent,
 
 };

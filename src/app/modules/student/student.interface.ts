@@ -37,7 +37,9 @@ export type TStudent = {
   permanentAddress: string;
   guardian: TGuardian;
   localGuardian: TLocalGuardian;
+  isDeleted:boolean,
   profileImg?: string;
+  academicDepartment:Types.ObjectId,
   admissionSemester:Types.ObjectId,
   isActive: 'active' | 'blocked';
 };

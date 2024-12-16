@@ -45,14 +45,43 @@ const   creatStudentValidationSchema = z.object({
   permanentAddress: z.string(),
   guardian: guardianValidationSchema,
   localGuardian: localGuardianValidationSchema,
-  admissiomSemester:z.string().optional(),
+  academicDepartment:z.string().optional(),
+  admissionSemester:z.string().optional(),
+  isDeleted:z.boolean().optional(),
   profileImg: z.string().optional(),
  })
-
 })
 })
+//update student validation
+const updateStudentValidationSchema = z.object({
+  body: z.object({
+    password: z.string().optional(), // Optional for updates
+    student: z
+      .object({
+        name: userNameValidationSchema.partial(), // Make all fields in the name schema optional
+        gender: z.enum(['male', 'female', 'other']).optional(),
+        dateOfBirth: z.string().optional(),
+        email: z.string().email('Please provide a valid email address.').trim().optional(),
+        contactNo: z.string().optional(),
+        emergencyContactNo: z.string().optional(),
+        bloodGroup: z
+          .enum(['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'])
+          .optional(),
+        presentAddress: z.string().optional(),
+        permanentAddress: z.string().optional(),
+        guardian: guardianValidationSchema.partial(), // Make all fields in the guardian schema optional
+        localGuardian: localGuardianValidationSchema.partial(), // Make all fields in the local guardian schema optional
+        academicDepartment: z.string().optional(),
+        admissionSemester: z.string().optional(),
+        isDeleted: z.boolean().optional(),
+        profileImg: z.string().optional(),
+      })
+      .partial(), // Make all fields in the student schema optional
+  }),
+});
 
 // Export Zod Schema
 export const studentValidation = {
-  creatStudentValidationSchema
+  creatStudentValidationSchema,
+  updateStudentValidationSchema
 };

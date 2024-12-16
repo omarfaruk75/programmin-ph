@@ -7,6 +7,7 @@ const userValidationSchema = z.object({
     })
     .max(20, { message: 'Password should not be more than 20' })
     .optional(),
+     isDeleted:z.boolean().optional()
 });
 
 export const userValidation = {

@@ -4,7 +4,9 @@ import { AcademicSemesterCode, AcademicSemesterName, Months } from './academicSe
 
 const createAcademicSemesterValidationSchema = z.object({
  body:z.object({
-    name:z.enum([...AcademicSemesterName] as [string, ...string[]]),
+    name:z.enum([...AcademicSemesterName] as [string, ...string[]], {
+      required_error: "Name is required",
+    }),
     code:z.enum([...AcademicSemesterCode] as [string, ...string[]]),
     year:z.string(),
     startMonth:z.enum([...Months] as [string, ...string[]]),

@@ -5,8 +5,10 @@ import {
   TStudent,
   TUserName,
 } from './student.interface';
-import { AcademicSemester } from '../academicSemester/academicSemester.model';
-import { string } from 'zod';
+import AppError from '../../errors/AppError';
+import {StatusCodes} from 'http-status-codes';
+
+
 
 
 
@@ -86,7 +88,7 @@ const studentSchema = new Schema<TStudent>({
     required:true
   },
   dateOfBirth: { type: String},
-  email: { type: String, required: true },
+  email: { type: String, required: true,unique:true },
   contactNo: { type: String, required: true },
   emergencyContactNo: { type: String, required: true },
   bloodGroup: {
@@ -97,11 +99,35 @@ const studentSchema = new Schema<TStudent>({
   permanentAddress: { type: String, required: true },
   guardian: guardianSchema,
   localGuardian: localGuradianSchema,
+   isDeleted: {
+      type: Boolean,
+      default: false,
+    },
   profileImg: { type: String },
+  academicDepartment:{
+    type:Schema.Types.ObjectId,
+    ref:'AcademicDepartment'
+  },
   admissionSemester:{
     type:Schema.Types.ObjectId,
     ref:'AcademicSemester'
   }
 });
 
+studentSchema.pre('aggregate',function(next){
+this.pipeline().unshift({$match:{isDeleted:{$ne:true}}});
+next();
+});
+studentSchema.statics.isUserExists =async function (id:string){
+  const existingUser = await Student.findOne({id})
+  return existingUser;
+}
+studentSchema.pre('save', async function (next) {
+    const existingStudent = await Student.findOne({ email: this.email });
+    if (existingStudent) {
+      throw new AppError(StatusCodes.BAD_REQUEST, 'Email already exists')
+    }
+    next();
+  }
+);
 export const Student = model<TStudent>('Student', studentSchema);
