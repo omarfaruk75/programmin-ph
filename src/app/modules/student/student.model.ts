@@ -113,7 +113,9 @@ const studentSchema = new Schema<TStudent>({
     ref:'AcademicSemester'
   }
 });
-
+studentSchema.virtual('fullName').get(function (){
+  return this?.name?.firstName+this?.name?.middleName+this?.name?.lastName
+})
 studentSchema.pre('aggregate',function(next){
 this.pipeline().unshift({$match:{isDeleted:{$ne:true}}});
 next();
