@@ -7,6 +7,14 @@ const userNameValidationSchema = z.object({
   lastName: z.string().max(20, 'First name should not exceed 20 characters.'),
 });
 
+// Update User Name Schema
+const updateUserNameValidationSchema = z.object({
+  firstName: z.string().max(20, 'First name should not exceed 20 characters.').optional(),
+  middleName: z.string().optional(),
+  lastName: z.string().max(20, 'First name should not exceed 20 characters.').optional(),
+});
+
+
 // Guardian Schema
 const guardianValidationSchema = z.object({
   fatherName: z.string().min(1, 'Father Name should not below 1 character.'),
@@ -21,12 +29,32 @@ const guardianValidationSchema = z.object({
   motherContactNo: z.string().min(1),
 });
 
+// Update Guardian Schema
+const updateGuardianValidationSchema = z.object({
+  fatherName: z.string().min(1, 'Father Name should not below 1 character.').optional(),
+  motherName: z.string().min(1, 'Mother Name should not below 1 character.').optional(),
+  fatherOccupation: z
+    .string()
+    .min(1, "Father's occupation Name should not below 1 character.").optional(),
+  motherOccupation: z
+    .string()
+    .min(1, "Mother's occupation Name should not below 1 character.").optional(),
+  fatherContactNo: z.string().min(1),
+  motherContactNo: z.string().min(1),
+});
 // Local Guardian Schema
 const localGuardianValidationSchema = z.object({
   name: z.string().min(1),
   occupation: z.string().min(1),
   contactNo: z.string().min(1),
   address: z.string().min(1),
+});
+// Update Local Guardian Schema
+const updateLocalGuardianValidationSchema = z.object({
+  name: z.string().min(1).optional(),
+  occupation: z.string().min(1).optional(),
+  contactNo: z.string().min(1).optional(),
+  address: z.string().min(1).optional(),
 });
 
 // Student Schema
@@ -58,7 +86,7 @@ const updateStudentValidationSchema = z.object({
     password: z.string().optional(), // Optional for updates
     student: z
       .object({
-        name: userNameValidationSchema.partial(), // Make all fields in the name schema optional
+        name: updateUserNameValidationSchema, // Make all fields in the name schema optional
         gender: z.enum(['male', 'female', 'other']).optional(),
         dateOfBirth: z.string().optional(),
         email: z.string().email('Please provide a valid email address.').trim().optional(),
@@ -69,8 +97,8 @@ const updateStudentValidationSchema = z.object({
           .optional(),
         presentAddress: z.string().optional(),
         permanentAddress: z.string().optional(),
-        guardian: guardianValidationSchema.partial(), // Make all fields in the guardian schema optional
-        localGuardian: localGuardianValidationSchema.partial(), // Make all fields in the local guardian schema optional
+        guardian: updateGuardianValidationSchema, // Make all fields in the guardian schema optional
+        localGuardian: updateLocalGuardianValidationSchema.partial(), // Make all fields in the local guardian schema optional
         academicDepartment: z.string().optional(),
         admissionSemester: z.string().optional(),
         isDeleted: z.boolean().optional(),

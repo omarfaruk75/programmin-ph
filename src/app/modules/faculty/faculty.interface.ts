@@ -7,25 +7,12 @@ export type TUserName = {
   lastName: string;
 };
 
-export type TGuardian = {
-  fatherName: string;
-  fatherOccupation: string;
-  fatherContactNo: string;
-  motherName: string;
-  motherOccupation: string;
-  motherContactNo: string;
-};
 
-export type TLocalGuardian = {
-  name: string;
-  occupation: string;
-  contactNo: string;
-  address: string;
-};
-
-export type TStudent = {
+export type TFaculty = {
   id: string;
   user: Types.ObjectId;
+  role:string;
+  designation:string;
   name: TUserName;
   gender: 'male' | 'female'|'other';
   dateOfBirth?: string;
@@ -35,13 +22,10 @@ export type TStudent = {
   bloodGroup?: 'A+' | 'A-' | 'B+' | 'B-' | 'AB+' | 'AB-' | 'O+' | 'O-';
   presentAddress: string;
   permanentAddress: string;
-  guardian: TGuardian;
-  localGuardian: TLocalGuardian;
-  isDeleted:boolean,
   profileImg?: string;
   academicDepartment:Types.ObjectId,
-  admissionSemester:Types.ObjectId,
-  isActive: 'active' | 'blocked',
+  academicFaculty:Types.ObjectId,
+  isDeleted:boolean,
   createdAt:Date,
   updatedAt:Date
 };

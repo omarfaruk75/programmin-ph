@@ -4,63 +4,30 @@ import AppError from '../../errors/AppError';
 import {StatusCodes} from 'http-status-codes';
 import { User } from '../user/user.model';
 import { TStudent } from './student.interface';
+import QueryBuilder from '../../builder/QueryBuilder';
+import { studentSearchableField } from './student.constant';
 
-const getAllStudentsFromDB = async (query:Record<string,unknown>) => {
-  //{email:{$regex:query.searchTerm,$options:i}}
-  const objQuery = {...query}
-  let searchTerm = '';
-  if(query?.searchTerm){
-    searchTerm = query?.searchTerm as string;
-  }
 
-  const studentSearchField =['email','name.firstName','presentAddress'];
-  const searchQuery =Student.find({
-    $or:studentSearchField.map((field)=>({
-      [field]:{$regex:searchTerm,$options:'i'}
-    }))
-  })
-
-  const excludeField = ['searchTerm','sort','fields','page','skip','limit']
-    excludeField.forEach((el)=>delete objQuery[el])
-
-  const filterQuery = searchQuery.find(objQuery).populate('admissionSemester').populate({
+const getAllStudentsFromDB = async (query: Record<string, unknown>) => {
+  // Build the query using QueryBuilder
+  const studentQuery = new QueryBuilder(Student.find().populate('admissionSemester').populate({
     path:'academicDepartment',
     populate:{
       path:'academicFaculty'
     }
-  });
-  let sort = '-createdAt';
-if(query.sort){
-  sort = query.sort as string
-}
-const sortQuery =  filterQuery.sort(sort)
+  }), query)
+    .search(studentSearchableField)
+    .filter()
+    .sort()
+    .paginate()
+    .fields();
 
-let page = 1;
-let limit = 1;
-let skip = 0;
-if(query.limit){
-  limit = query.limit as number;
-}
-if(query.page){
-  page = query.page as number;
-  skip = (page-1)*limit;
-}
-const paginateQuery = sortQuery.skip(skip)
-const limitQuery = paginateQuery.limit(limit);
-//field limiting
-let fields =  "-__v";
-if(query.fields){
-  fields= (query.fields as string).split(',').join(' ')
-}
- const fieldQuery = await limitQuery.select(fields)
-  return fieldQuery;
+  const result = await studentQuery.modelQuery;
+  return result;
 };
 
-
-
-
 const getSingleStudentFromDB = async (id: string) => {
-  const result = await Student.findOne({id}).populate('admissionSemester').populate({
+  const result = await Student.findById(id).populate('admissionSemester').populate({
     path:'academicDepartment',
     populate:{
       path:'academicFaculty'
@@ -88,30 +55,31 @@ if(localGuardian && Object.keys(localGuardian).length){
     modifiedUpdatedData[`localGuardian.${key}`]=value;
   }
 }
-  const result = await Student.findOneAndUpdate({ id},modifiedUpdatedData,{ new: true,runValidators:true });
+  const result = await Student.findByIdAndUpdate(id,modifiedUpdatedData,{ new: true,runValidators:true });
   return result;
 };
 const deleteStudentFromDB = async (id: string) => {
-    const existingStudent = await Student.findOne({id}); // Use the static method
+    const existingStudent = await Student.findById(id); // Use the static method
     if (!existingStudent) {
       throw new AppError(StatusCodes.NOT_FOUND, 'Student not found');
     }
   const session = await mongoose.startSession();
   try {
     session.startTransaction();
-    const deletedStudent = await Student.findOneAndUpdate(
-      {id},
+    const deletedStudent = await Student.findByIdAndUpdate(
+      id,
       {isDeleted:true},
       {new:true,session});
     if(!deletedStudent){
       throw new AppError(StatusCodes.BAD_REQUEST,'Failed to student delete')
     }
-    const deletedUser = await User.findOneAndUpdate(
-      { id },
+    const userId = deletedStudent.user;
+    const deletedUser = await User.findByIdAndUpdate(
+     userId,
       {isDeleted:true},
       {new:true,session});
      if(!deletedUser){
-      throw new AppError(StatusCodes.BAD_REQUEST,'Failed to student delete')
+      throw new AppError(StatusCodes.BAD_REQUEST,'Failed to user delete')
     }
     await session.commitTransaction();
     await session.endSession();

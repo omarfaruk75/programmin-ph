@@ -1,4 +1,6 @@
 
+import QueryBuilder from "../../builder/QueryBuilder";
+import { departmentSearchableField } from "./academicDepartment.constant";
 import { TAcademicDepartment } from "./academicDepartment.interface";
 import { AcademicDepartment } from "./academicDepartment.model";
 
@@ -8,17 +10,24 @@ const createAcademicDepartmentIntoDB =async(payload:TAcademicDepartment)=>{
     return result;
 }
 
-const getAcademicDepartmentsFromDB = async () => {
-  const result = await AcademicDepartment.find().populate('academicFaculty');
+const getAcademicDepartmentsFromDB = async (query:Record<string,unknown>) => {
+  const departmentQuery = new QueryBuilder(AcademicDepartment.find().populate('academicFaculty'), query)
+    .search(departmentSearchableField)
+    .filter()
+    .sort()
+    .paginate()
+    .fields();
+
+  const result = await departmentQuery.modelQuery;
   return result;
 };
 
 const getSingleAcademicDepartmentFromDB = async (id: string) => {
-  const result = await AcademicDepartment.findById({_id:id }).populate('academicFaculty');
+  const result = await AcademicDepartment.findById(id).populate('academicFaculty');
   return result;
 };
 const updateAcademicDepartmentFromDB = async (id: string,payload:Partial<TAcademicDepartment>) => {
-  const result = await AcademicDepartment.findOneAndUpdate({ _id:id },payload,{new:true});
+  const result = await AcademicDepartment.findByIdAndUpdate(id, payload,{new:true});
   return result
 };
 

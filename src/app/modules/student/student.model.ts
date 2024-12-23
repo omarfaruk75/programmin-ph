@@ -112,7 +112,8 @@ const studentSchema = new Schema<TStudent>({
     type:Schema.Types.ObjectId,
     ref:'AcademicSemester'
   }
-});
+},
+{timestamps:true});
 studentSchema.virtual('fullName').get(function (){
   return this?.name?.firstName+this?.name?.middleName+this?.name?.lastName
 })

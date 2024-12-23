@@ -1,13 +1,13 @@
 import {RequestHandler} from 'express';
 import sendResponse from '../../utils/sendResponse';
-import httpStatus from "http-status";
+import {StatusCodes} from 'http-status-codes';
 import catchAsync from '../../utils/catchAsync';
 import { AcademicDepartmentServices } from './academicDepartment.service';
 
 const createAcademicDepartment:RequestHandler = catchAsync(async (req, res) => {
     const result = await AcademicDepartmentServices.createAcademicDepartmentIntoDB(req.body)
    sendResponse(res,{
-    statusCode:httpStatus.OK,
+    statusCode:StatusCodes.OK,
     success:true,
     message:'Academic Department is Created Successfully',
     data:result
@@ -16,9 +16,10 @@ const createAcademicDepartment:RequestHandler = catchAsync(async (req, res) => {
 
 const getAcademicDepartments = catchAsync(async (req, res,next) => {
   try {
-    const result = await AcademicDepartmentServices.getAcademicDepartmentsFromDB();
+    const queryField =req.query
+    const result = await AcademicDepartmentServices.getAcademicDepartmentsFromDB(queryField);
    sendResponse(res,{
-    statusCode:httpStatus.OK,
+    statusCode:StatusCodes.OK,
     success:true,
     message:'Academic Departments Retrieved Successfully',
     data:result
@@ -32,7 +33,7 @@ const getSingleAcademicDepartment = catchAsync(async (req, res) => {
     const { departmentId } = req.params;
     const result = await AcademicDepartmentServices.getSingleAcademicDepartmentFromDB(departmentId);
     sendResponse(res,{
-    statusCode:httpStatus.OK,
+    statusCode:StatusCodes.OK,
     success:true,
     message:'Academic Department Retrieved Successfully',
     data:result
@@ -42,7 +43,7 @@ const updateAcademicDepartment = catchAsync(async (req, res) => {
     const { departmentId } = req.params;
     const result = await AcademicDepartmentServices.updateAcademicDepartmentFromDB(departmentId,req.body);
   sendResponse(res,{
-    statusCode:httpStatus.OK,
+    statusCode:StatusCodes.OK,
     success:true,
     message:'Academic Department Updated Successfully',
     data:result
