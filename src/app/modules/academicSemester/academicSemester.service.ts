@@ -3,7 +3,7 @@ import QueryBuilder from "../../builder/QueryBuilder";
 import AppError from "../../errors/AppError";
 import { facultySearchableField } from "../academicFaculty/academicFaculty.constant";
 import { AcademicFaculty } from "../academicFaculty/academicFaculty.model";
-import { academicSemesterNameCodeMapper } from "./academicSemester.constant";
+import { academicSemesterNameCodeMapper, semesterSearchableField } from "./academicSemester.constant";
 import { TAcademicSemester} from "./academicSemester.interface";
 import { AcademicSemester } from "./academicSemester.model";
 import {StatusCodes} from 'http-status-codes';
@@ -22,8 +22,8 @@ throw new AppError(StatusCodes.NOT_FOUND,'Invalid Semester Code')
 
 
 const getAcademicSemestersFromDB =async (query:Record<string,unknown>) => {
-  const semesterQuery = new QueryBuilder(AcademicFaculty.find(), query)
-    .search(facultySearchableField)
+  const semesterQuery = new QueryBuilder(AcademicSemester.find(), query)
+    .search(semesterSearchableField)
     .filter()
     .sort()
     .paginate()
